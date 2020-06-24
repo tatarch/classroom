@@ -1,32 +1,30 @@
 <?php
 
 namespace app\controllers;
+
 use app\models\Classroom;
+use Yii;
+use yii\rest\ActiveController;
+use yii\web\BadRequestHttpException;
 
-
-
-class ClassroomController extends \yii\web\Controller
+class ClassroomController extends ActiveController
 {
+    public $modelClass = 'app\models\Classroom';
+
     public function actionActivate()
     {
-        $classroom = Classroom::find()->where(['id' => 1])->one();
-
-        if($classroom->activation==0){
-            $classroom->activation=1;
-            $classroom->save();
+        $id = Yii::$app->request->get('id');
+        $classroom = Classroom::find()->where(['id' => $id])->one();
+        if (!$classroom) {
+            throw new BadRequestHttpException('not found');
         }
-        echo 'Classroom is activate';
-    }
-
-    public function actionDeactivate()
-    {
-        $classroom = Classroom::find()->where(['id' => 1])->one();
-
-        if($classroom->activation==1){
-            $classroom->activation=0;
-            $classroom->save();
+        if ($classroom->activation == 0) {
+            $classroom->activation = 1;
+        } else {
+            $classroom->activation = 0;
         }
-        echo 'Classroom is deactivate';
+        $classroom->save();
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $classroom;
     }
-
 }

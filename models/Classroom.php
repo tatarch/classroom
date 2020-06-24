@@ -26,8 +26,9 @@ class Classroom extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activation'], 'required'],
+            [['activation', 'name'], 'required'],
             [['activation'], 'integer'],
+
         ];
     }
 
